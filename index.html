@@ -1,0 +1,199 @@
+Skip to content
+tyoaikaseuranta
+Repository navigation
+Code
+Issues
+Pull requests
+tyoaikaseuranta
+/index.html
+vilmusenahojuha-stack
+vilmusenahojuha-stack
+last week
+311 lines (270 loc) · 10.8 KB
+
+Code
+
+Blame
+Older
+Newer
+
+Add files via upload
+last week
+		<button class="btn btn-green" id="btnStart">ALOITA</button>
+		<button class="btn btn-yellow" id="btnBreak">TAUKO</button>
+		<button class="btn btn-red" id="btnStop">LOPETA</button>
+		<button class="btn btn-ghost" id="btnFuel">TANKKAUS</button>
+		</div>
+        <div class="divider"></div>
+        <div class="row">
+          <div>
+            <div class="label">Päiväraha</div>
+            <div class="seg" id="perDiemSeg">
+              <button class="segbtn" data-perdiem="0">Ei</button>
+              <button class="segbtn" data-perdiem="1">Puoli</button>
+              <button class="segbtn" data-perdiem="2">Koko</button>
+            </div>
+          </div>
+          <div class="right">
+            <button class="btn btn-ghost" id="btnManualDay">Lisää päivä manuaalisesti</button>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="row">
+          <h2 class="h2">Historia</h2>
+          <div class="muted" id="historyHint"></div>
+        </div>
+        <div id="historyList" class="history"></div>
+        <div class="btnrow" style="margin-top:14px;">
+          <button class="btn btn-ghost" id="btnBackMenu">Takaisin valikkoon</button>
+        </div>
+      </section>
+    </main>
+    <!-- VIEW: SETTINGS -->
+    <main class="view" id="viewSettings" style="display:none;">
+      <section class="card">
+	  <div class="warn" id="foreignRunningBox" style="display:none;">
+  <div>
+    <b>Käynnissä oleva työ kuuluu toiselle käyttäjälle.</b><br>
+    Käyttäjä: <span id="foreignRunningUser"></span>
+  </div>
+  <div class="btnrow" style="margin-top:8px;">
+    <button class="btn btn-red" id="btnClearForeignRunning">
+      Poista käynnissä oleva työ
+    </button>
+  </div>
+</div>
+        <h1 class="h1">Asetukset</h1>
+        <div class="label">Google Sheets Apps Script /exec URL</div>
+        <input id="sheetsUrl" class="input" placeholder="https://script.google.com/macros/s/XXXXX/exec" />
+        <div class="label" style="margin-top:10px;">Fuel-sovelluksen URL (Tankkaus)</div>
+        <input id="fuelUrl" class="input" placeholder="https://..." />
+        <div class="row" style="margin-top:12px;">
+          <button class="btn btn-blue" id="btnSaveSettings">Tallenna</button>
+          <button class="btn btn-ghost" id="btnTestSheets">Testaa Sheets-yhteys</button>
+        </div>
+        <div class="divider"></div>
+        <div class="row">
+          <button class="btn btn-ghost" id="btnSyncUnsent">Lähetä lähettämättömät</button>
+          <div class="muted right" id="unsentCount"></div>
+        </div>
+        <div class="note" id="settingsNote"></div>
+        <div class="btnrow" style="margin-top:14px;">
+          <button class="btn btn-ghost" id="btnBackMenu2">Takaisin valikkoon</button>
+        </div>
+      </section>
+    </main>
+    <!-- MODAL: SUMMARY (Stop / Manual approve) -->
+    <div class="modal" id="modalSummary" style="display:none;" role="dialog" aria-modal="true">
+      <div class="modalSheet">
+        <div class="modalHead">
+          <div>
+            <div class="h2">Koonti</div>
+            <div class="muted" id="sumSub"></div>
+          </div>
+          <button class="btn btn-ghost" id="sumClose">✕</button>
+        </div>
+        <div class="grid2">
+          <div>
+            <div class="label">Käyttäjä</div>
+            <input class="input" id="sumUser" disabled />
+          </div>
+          <div>
+            <div class="label">Päivämäärä (aloituspäivä)</div>
+            <input class="input" id="sumStartDate" disabled />
+          </div>
+        </div>
+        <div class="grid2">
+          <div>
+            <div class="label">Alku</div>
+            <input class="input" id="sumStartTime" type="time" />
+          </div>
+          <div>
+            <div class="label">Loppu</div>
+            <input class="input" id="sumEndTime" type="time" />
+          </div>
+        </div>
+        <div class="grid2">
+          <div>
+            <div class="label">Tauko yhteensä (min)</div>
+            <input class="input" id="sumBreakTotal" type="number" min="0" step="1" />
+          </div>
+          <div>
+            <div class="label">Päiväraha</div>
+            <select class="input" id="sumPerDiem">
+              <option value="0">Ei</option>
+              <option value="1">Puoli</option>
+              <option value="2">Koko</option>
+            </select>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="row">
+            <div class="muted">Vähennys (yli 30 min): <b id="sumDeduct"></b> min</div>
+            <div class="muted right">Työ yhteensä: <b id="sumTotal"></b></div>
+          </div>
+          <div class="row" style="margin-top:6px;">
+            <div class="muted">P: <b id="sumDay"></b> h</div>
+            <div class="muted">I: <b id="sumEve"></b> h</div>
+            <div class="muted">Y: <b id="sumNight"></b> h</div>
+          </div>
+        </div>
+        <div class="warn">
+          Hyväksymällä et voi enää muokata tätä merkintää.
+        </div>
+        <div class="btnbar">
+          <button class="btn btn-ghost" id="sumCancel">Peruuta</button>
+          <button class="btn btn-blue" id="sumApprove">Hyväksy ja tallenna</button>
+        </div>
+      </div>
+    </div>
+    <!-- MODAL: MANUAL DAY -->
+    <div class="modal" id="modalManual" style="display:none;" role="dialog" aria-modal="true">
+      <div class="modalSheet">
+        <div class="modalHead">
+          <div>
+            <div class="h2">Lisää päivä manuaalisesti</div>
+            <div class="muted">Jos loppu &lt; alku → loppu on seuraavana päivänä.</div>
+          </div>
+          <button class="btn btn-ghost" id="manClose">✕</button>
+        </div>
+        <div class="grid2">
+          <div>
+            <div class="label">Päivämäärä</div>
+            <input class="input" id="manDate" type="date" />
+          </div>
+          <div>
+            <div class="label">Päiväraha</div>
+            <select class="input" id="manPerDiem">
+              <option value="0">Ei</option>
+              <option value="1">Puoli</option>
+              <option value="2">Koko</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid2">
+          <div>
+            <div class="label">Alku</div>
+            <input class="input" id="manStart" type="time" />
+          </div>
+          <div>
+            <div class="label">Loppu</div>
+            <input class="input" id="manEnd" type="time" />
+          </div>
+        </div>
+        <div>
+          <div class="label">Tauko (min)</div>
+          <input class="input" id="manBreak" type="number" min="0" step="1" value="0" />
+        </div>
+        <div class="btnbar" style="margin-top:12px;">
+          <button class="btn btn-ghost" id="manCancel">Peruuta</button>
+          <button class="btn btn-blue" id="manNext">Jatka koontiin</button>
+        </div>
+      </div>
+    </div>
+    <!-- TOAST -->
+    <div class="toast" id="toast" style="display:none;"></div>
+  </div>
+  <script src="app.js?v=2"></script>
+</body>
+</html>
